@@ -115,4 +115,40 @@ public class SignUpRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public @Size(min = FULLNAME_MIN_LENGTH, max = FULLNAME_MAX_LENGTH,
+            message = "ФИО должно содержать от "
+                    + FULLNAME_MIN_LENGTH + " до " + FULLNAME_MAX_LENGTH + " символов") @NotNull(message = "ФИО не может быть null") String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(@Size(min = FULLNAME_MIN_LENGTH, max = FULLNAME_MAX_LENGTH,
+            message = "ФИО должно содержать от "
+                    + FULLNAME_MIN_LENGTH + " до " + FULLNAME_MAX_LENGTH + " символов") @NotNull(message = "ФИО не может быть null") String fullName) {
+        this.fullName = fullName;
+    }
+
+    public @Size(min = DATEOFBIRTH_MAX_LENGTH, max = DATEOFBIRTH_MAX_LENGTH,
+            message = "Длина даты рождения должна быть от " + DATEOFBIRTH_MIN_LENGTH
+                    + " до " + DATEOFBIRTH_MAX_LENGTH + " символов") @NotNull(message = "Birth date cannot be null") String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(@Size(min = DATEOFBIRTH_MAX_LENGTH, max = DATEOFBIRTH_MAX_LENGTH,
+            message = "Длина даты рождения должна быть от " + DATEOFBIRTH_MIN_LENGTH
+                    + " до " + DATEOFBIRTH_MAX_LENGTH + " символов") @NotNull(message = "Birth date cannot be null") String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public @NotBlank @Size(min = PHONENUBMER_MIN_LENGTH, max = PHONENUBMER_MAX_LENGTH,
+            message = "Длина номера телефона должна быть от " + PHONENUBMER_MIN_LENGTH
+                    + " до " + PHONENUBMER_MAX_LENGTH + " символов") @NotNull(message = "Номер телефона не может быть null") String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(@NotBlank @Size(min = PHONENUBMER_MIN_LENGTH, max = PHONENUBMER_MAX_LENGTH,
+            message = "Длина номера телефона должна быть от " + PHONENUBMER_MIN_LENGTH
+                    + " до " + PHONENUBMER_MAX_LENGTH + " символов") @NotNull(message = "Номер телефона не может быть null") String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }

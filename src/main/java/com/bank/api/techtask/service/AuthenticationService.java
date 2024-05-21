@@ -9,6 +9,7 @@ import com.bank.api.techtask.domain.model.Role;
 import com.bank.api.techtask.domain.model.RoleEnum;
 import com.bank.api.techtask.domain.model.User;
 import com.bank.api.techtask.exception.EmailInUseException;
+import com.bank.api.techtask.exception.PhoneNumberTakenException;
 import com.bank.api.techtask.exception.RoleNotFoundException;
 import com.bank.api.techtask.exception.UsernameTakenException;
 import com.bank.api.techtask.repository.RoleRepository;
@@ -76,11 +77,17 @@ public class AuthenticationService {
             throw new EmailInUseException("Error: email already in use!");
         }
 
+        if(userRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new PhoneNumberTakenException("Error: phone number already in use!");
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
+        user.setFullName(request.getFullName());
+        user.setDateOfBirth(request.getDateOfBirth());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        user.setPhoneNumber(request.getPhoneNumber());
         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
                 .orElseThrow(() -> new RoleNotFoundException("Error. User not found."));
         Role adminRole = roleRepository.findByName(RoleEnum.ROLE_ADMIN)

@@ -1,7 +1,7 @@
 package com.bank.api.techtask.config;
 
-import com.password.generator.bsuir.security.service.JwtService;
-import com.password.generator.bsuir.security.service.UserService;
+import com.bank.api.techtask.service.JwtService;
+import com.bank.api.techtask.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
