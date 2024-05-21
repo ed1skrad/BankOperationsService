@@ -20,3 +20,15 @@ CREATE TABLE user_roles (
 
 INSERT INTO roles (name) VALUES ('ROLE_USER');
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
+
+CREATE TABLE account (
+                         id SERIAL PRIMARY KEY,
+                         balance NUMERIC(19,2) NOT NULL,
+                         user_id BIGINT UNIQUE,
+                         FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+ALTER TABLE users
+    ADD COLUMN full_name VARCHAR(255) NOT NULL,
+    ADD COLUMN date_of_birth VARCHAR(32) NOT NULL,
+    ADD COLUMN phone_number VARCHAR(120) NOT NULL;

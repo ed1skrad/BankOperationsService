@@ -5,6 +5,7 @@ import com.bank.api.techtask.config.JwtAuthenticationFilter;
 import com.bank.api.techtask.domain.dto.JwtAuthenticationResponse;
 import com.bank.api.techtask.domain.dto.SignInRequest;
 import com.bank.api.techtask.domain.dto.SignUpRequest;
+import com.bank.api.techtask.domain.model.Account;
 import com.bank.api.techtask.domain.model.Role;
 import com.bank.api.techtask.domain.model.RoleEnum;
 import com.bank.api.techtask.domain.model.User;
@@ -12,6 +13,7 @@ import com.bank.api.techtask.exception.EmailInUseException;
 import com.bank.api.techtask.exception.PhoneNumberTakenException;
 import com.bank.api.techtask.exception.RoleNotFoundException;
 import com.bank.api.techtask.exception.UsernameTakenException;
+import com.bank.api.techtask.repository.AccountRepository;
 import com.bank.api.techtask.repository.RoleRepository;
 import com.bank.api.techtask.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +25,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Service class for handling authentication operations such as sign up, sign in, and logout.
  */
@@ -39,6 +44,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final InvalidTokenRepository invalidTokenRepository;
+    private final AccountRepository accountRepository;
 
     /**
      * Constructor.
@@ -48,7 +54,8 @@ public class AuthenticationService {
                                  PasswordEncoder passwordEncoder,
                                  AuthenticationManager authenticationManager,
                                  UserRepository userRepository, RoleRepository roleRepository,
-                                 InvalidTokenRepository invalidTokenRepository) {
+                                 InvalidTokenRepository invalidTokenRepository,
+                                 AccountRepository accountRepository) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -56,6 +63,7 @@ public class AuthenticationService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.invalidTokenRepository = invalidTokenRepository;
+        this.accountRepository = accountRepository;
     }
 
     /**
@@ -98,7 +106,13 @@ public class AuthenticationService {
         roles.add(adminRole);
 
         user.setRole(roles);
+        BigDecimal balance = new BigDecimal(ThreadLocalRandom.current().nextInt(1, 1000 + 1));
+        Account account = new Account();
+        account.setBalance(balance);
+        account.setUser(user);
+
         userRepository.save(user);
+        accountRepository.save(account);
 
         String jwt = jwtService.generateToken(user);
 
