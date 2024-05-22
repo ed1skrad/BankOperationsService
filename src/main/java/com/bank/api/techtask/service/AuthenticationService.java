@@ -106,7 +106,8 @@ public class AuthenticationService {
         roles.add(adminRole);
 
         user.setRole(roles);
-        BigDecimal balance = new BigDecimal(ThreadLocalRandom.current().nextInt(1, 1000 + 1));
+        BigDecimal balance = request.getInitialSum();
+
         Account account = new Account();
         account.setBalance(balance);
         account.setUser(user);

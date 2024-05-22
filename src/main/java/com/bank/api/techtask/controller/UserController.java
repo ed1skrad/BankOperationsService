@@ -2,6 +2,7 @@ package com.bank.api.techtask.controller;
 
 import com.bank.api.techtask.domain.model.User;
 import com.bank.api.techtask.service.AuthenticationService;
+import com.bank.api.techtask.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(AuthenticationService authenticationService) {
+    public UserController(AuthenticationService authenticationService, UserService userService) {
         this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
     /**
@@ -48,5 +51,19 @@ public class UserController {
                                              @Valid @RequestBody User updatedUser) {
         authenticationService.updateUser(userIdToUpdate, updatedUser);
         return ResponseEntity.ok("User updated successfully");
+    }
+
+    @DeleteMapping("/delete/email")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> deleteUserEmail() {
+        userService.deleteUserEmail();
+        return ResponseEntity.ok("Email deleted successfully");
+    }
+
+    @DeleteMapping("/delete/phone-number")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> deleteUserPhoneNumber() {
+        userService.deleteUserPhoneNumber();
+        return ResponseEntity.ok("Phone number deleted successfully");
     }
 }

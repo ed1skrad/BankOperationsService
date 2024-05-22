@@ -36,16 +36,13 @@ public class User implements UserDetails {
     @Size(max = 32)
     private String dateOfBirth;
 
-    @NotBlank
     @Size(max = 50)
-    @Email
     private String email;
 
     @NotBlank
     @Size(max = 120)
     private String password;
 
-    @NotBlank
     @Size(max = 120)
     private String phoneNumber;
 
@@ -226,13 +223,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public @NotBlank @Size(max = 120) String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(@NotBlank @Size(max = 120) String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     public Account getAccount() {
         return account;
@@ -240,5 +230,13 @@ public class User implements UserDetails {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public @Size(max = 120) String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(@Size(max = 120) String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

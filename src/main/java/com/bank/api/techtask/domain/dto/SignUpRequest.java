@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 /**
  * Data transfer object for a sign-up request.
  */
@@ -61,6 +63,17 @@ public class SignUpRequest {
                     + " до " + PHONENUBMER_MAX_LENGTH + " символов")
     @NotNull(message = "Номер телефона не может быть null")
     private String phoneNumber;
+
+    public @NotBlank BigDecimal getInitialSum() {
+        return initialSum;
+    }
+
+    public void setInitialSum(@NotBlank BigDecimal initialSum) {
+        this.initialSum = initialSum;
+    }
+
+    @NotBlank
+    private BigDecimal initialSum;
 
     /**
      * Gets the username.
@@ -151,4 +164,6 @@ public class SignUpRequest {
                     + " до " + PHONENUBMER_MAX_LENGTH + " символов") @NotNull(message = "Номер телефона не может быть null") String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+
 }

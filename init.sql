@@ -1,7 +1,7 @@
 CREATE TABLE users (
                        id SERIAL PRIMARY KEY,
                        username VARCHAR(20) NOT NULL,
-                       email VARCHAR(50) UNIQUE NOT NULL,
+                       email VARCHAR(50) UNIQUE,
                        password VARCHAR(120) NOT NULL
 );
 
@@ -31,4 +31,4 @@ CREATE TABLE account (
 ALTER TABLE users
     ADD COLUMN full_name VARCHAR(255) NOT NULL,
     ADD COLUMN date_of_birth VARCHAR(32) NOT NULL,
-    ADD COLUMN phone_number VARCHAR(120) NOT NULL;
+    ADD COLUMN phone_number VARCHAR(120);
