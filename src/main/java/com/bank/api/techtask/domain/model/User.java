@@ -1,10 +1,8 @@
 package com.bank.api.techtask.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +31,8 @@ public class User implements UserDetails {
     @Size(max = 255)
     private String fullName;
 
-    @NotBlank
-    @Size(max = 32)
-    private String dateOfBirth;
+    @NotNull
+    private Date dateOfBirth;
 
     @Size(max = 50)
     private String email;
@@ -54,7 +51,8 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Account account;
 
     /**
@@ -154,13 +152,6 @@ public class User implements UserDetails {
         this.fullName = fullName;
     }
 
-    public String getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
 
     /**
      * Returns the email of the user.
@@ -240,5 +231,13 @@ public class User implements UserDetails {
 
     public void setPhoneNumber(@Size(max = 120) String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public @NotNull Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(@NotNull Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

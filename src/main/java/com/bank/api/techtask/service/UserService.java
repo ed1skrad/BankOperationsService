@@ -8,11 +8,15 @@ import com.bank.api.techtask.exception.PhoneNumberTakenException;
 import com.bank.api.techtask.exception.UserNotFoundException;
 import com.bank.api.techtask.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service class for handling user operations.
@@ -22,15 +26,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final HttpServletRequest httpServletRequest;
+    private final UserSpecifications userSpecifications;
 
     /**
      *Constructor.
      */
     @Autowired
-    public UserService(UserRepository repository, JwtService jwtService, HttpServletRequest httpServletRequest) {
+    public UserService(UserRepository repository, JwtService jwtService, HttpServletRequest httpServletRequest,
+                       UserSpecifications userSpecifications) {
         this.userRepository = repository;
         this.jwtService = jwtService;
         this.httpServletRequest = httpServletRequest;
+        this.userSpecifications = userSpecifications;
     }
 
     /**
@@ -131,5 +138,49 @@ public class UserService {
 
         user.setEmail(email);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void addEmail(Long userId, String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email is already in use.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+
+        if (user.getEmail() == null) {
+            user.setEmail(email);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User already has an email.");
+        }
+    }
+
+    @Transactional
+    public void addPhoneNumber(Long userId, String phoneNumber) {
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new IllegalArgumentException("Phone number is already in use.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+
+        if (user.getPhoneNumber() == null) {
+            user.setPhoneNumber(phoneNumber);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User already has a phone number.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> getAllUsers(Date dateOfBirth, String phoneNumber, String fullName, String email) {
+        Specification<User> spec = Specification.where(userSpecifications.hasDateOfBirthAfter(dateOfBirth))
+                .and(userSpecifications.hasPhoneNumber(phoneNumber))
+                .and(userSpecifications.hasFullNameStartingWith(fullName))
+                .and(userSpecifications.hasEmail(email));
+
+        return userRepository.findAll(spec);
     }
 }

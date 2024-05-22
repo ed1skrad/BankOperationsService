@@ -177,7 +177,7 @@ public class AuthenticationService {
     }
 
     /**
-     * Logs out a user by clearing the security context'
+     * Logs out a user by clearing the security context
      * and adding the JWT token to the invalid token repository.
      *
      * @param request the HTTP servlet request containing the JWT token.

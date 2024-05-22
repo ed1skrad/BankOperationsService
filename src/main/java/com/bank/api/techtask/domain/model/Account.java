@@ -1,5 +1,6 @@
 package com.bank.api.techtask.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ public class Account {
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
+    @JsonBackReference
     private User user;
 
     private BigDecimal balance;

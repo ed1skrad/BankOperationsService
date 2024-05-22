@@ -32,3 +32,6 @@ ALTER TABLE users
     ADD COLUMN full_name VARCHAR(255) NOT NULL,
     ADD COLUMN date_of_birth VARCHAR(32) NOT NULL,
     ADD COLUMN phone_number VARCHAR(120);
+
+ALTER TABLE users
+    ADD COLUMN date_of_birth DATE NOT NULL;

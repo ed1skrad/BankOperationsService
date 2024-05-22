@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * ErrorResponse object that contains the error message and HTTP status code.
  */
 
-@ControllerAdvice
-@RestControllerAdvice
+//@ControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**

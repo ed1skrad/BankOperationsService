@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Data transfer object for a sign-up request.
@@ -37,12 +38,8 @@ public class SignUpRequest {
     @NotNull(message = "ФИО не может быть null")
     private String fullName;
 
-    @Size(min = DATEOFBIRTH_MAX_LENGTH, max = DATEOFBIRTH_MAX_LENGTH,
-            message = "Длина даты рождения должна быть от " + DATEOFBIRTH_MIN_LENGTH
-                    + " до " + DATEOFBIRTH_MAX_LENGTH + " символов")
     @NotNull(message = "Birth date cannot be null")
-
-    private String dateOfBirth;
+    private Date dateOfBirth;
 
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH,
             message = "Адрес электронной почты должен содержать от "
@@ -64,15 +61,7 @@ public class SignUpRequest {
     @NotNull(message = "Номер телефона не может быть null")
     private String phoneNumber;
 
-    public @NotBlank BigDecimal getInitialSum() {
-        return initialSum;
-    }
-
-    public void setInitialSum(@NotBlank BigDecimal initialSum) {
-        this.initialSum = initialSum;
-    }
-
-    @NotBlank
+    @NotNull(message = "Initial sum cannot be null")
     private BigDecimal initialSum;
 
     /**
@@ -129,6 +118,14 @@ public class SignUpRequest {
         this.password = password;
     }
 
+    public @NotNull(message = "Birth date cannot be null") Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(@NotNull(message = "Birth date cannot be null") Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public @Size(min = FULLNAME_MIN_LENGTH, max = FULLNAME_MAX_LENGTH,
             message = "ФИО должно содержать от "
                     + FULLNAME_MIN_LENGTH + " до " + FULLNAME_MAX_LENGTH + " символов") @NotNull(message = "ФИО не может быть null") String getFullName() {
@@ -141,17 +138,6 @@ public class SignUpRequest {
         this.fullName = fullName;
     }
 
-    public @Size(min = DATEOFBIRTH_MAX_LENGTH, max = DATEOFBIRTH_MAX_LENGTH,
-            message = "Длина даты рождения должна быть от " + DATEOFBIRTH_MIN_LENGTH
-                    + " до " + DATEOFBIRTH_MAX_LENGTH + " символов") @NotNull(message = "Birth date cannot be null") String getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(@Size(min = DATEOFBIRTH_MAX_LENGTH, max = DATEOFBIRTH_MAX_LENGTH,
-            message = "Длина даты рождения должна быть от " + DATEOFBIRTH_MIN_LENGTH
-                    + " до " + DATEOFBIRTH_MAX_LENGTH + " символов") @NotNull(message = "Birth date cannot be null") String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
 
     public @NotBlank @Size(min = PHONENUBMER_MIN_LENGTH, max = PHONENUBMER_MAX_LENGTH,
             message = "Длина номера телефона должна быть от " + PHONENUBMER_MIN_LENGTH
@@ -165,5 +151,11 @@ public class SignUpRequest {
         this.phoneNumber = phoneNumber;
     }
 
+    public BigDecimal getInitialSum() {
+        return initialSum;
+    }
 
+    public void setInitialSum(BigDecimal initialSum) {
+        this.initialSum = initialSum;
+    }
 }

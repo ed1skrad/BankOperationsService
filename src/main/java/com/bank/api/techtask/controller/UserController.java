@@ -7,9 +7,14 @@ import com.bank.api.techtask.service.AuthenticationService;
 import com.bank.api.techtask.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+
 /**
  * Controller for managing users.
  */
@@ -80,4 +85,27 @@ public class UserController {
         userService.updateEmail(emailDTO.getEmail());
         return ResponseEntity.ok("Email updated successfully");
     }
+
+    @PostMapping("/add/email")
+    public ResponseEntity<String> addEmail(@RequestParam Long userId, @RequestParam String email) {
+        userService.addEmail(userId, email);
+        return ResponseEntity.ok("Email added successfully");
+    }
+
+    @PostMapping("/add/phone-number")
+    public ResponseEntity<String> addPhoneNumber(@RequestParam Long userId, @RequestParam String phoneNumber) {
+        userService.addPhoneNumber(userId, phoneNumber);
+        return ResponseEntity.ok("Phone number added successfully");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String fullName,
+            @RequestParam(required = false) String email) {
+        List<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email);
+        return ResponseEntity.ok(users);
+    }
+
 }
