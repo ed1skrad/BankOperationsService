@@ -1,11 +1,10 @@
 package com.bank.api.techtask.service;
 
 import com.bank.api.techtask.config.JwtAuthenticationFilter;
+import com.bank.api.techtask.domain.model.Account;
 import com.bank.api.techtask.domain.model.User;
-import com.bank.api.techtask.exception.DeleteException;
-import com.bank.api.techtask.exception.EmailInUseException;
-import com.bank.api.techtask.exception.PhoneNumberTakenException;
-import com.bank.api.techtask.exception.UserNotFoundException;
+import com.bank.api.techtask.exception.*;
+import com.bank.api.techtask.repository.AccountRepository;
 import com.bank.api.techtask.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -27,17 +27,19 @@ public class UserService {
     private final JwtService jwtService;
     private final HttpServletRequest httpServletRequest;
     private final UserSpecifications userSpecifications;
+    private final AccountRepository accountRepository;
 
     /**
      *Constructor.
      */
     @Autowired
     public UserService(UserRepository repository, JwtService jwtService, HttpServletRequest httpServletRequest,
-                       UserSpecifications userSpecifications) {
+                       UserSpecifications userSpecifications, AccountRepository accountRepository) {
         this.userRepository = repository;
         this.jwtService = jwtService;
         this.httpServletRequest = httpServletRequest;
         this.userSpecifications = userSpecifications;
+        this.accountRepository = accountRepository;
     }
 
     /**
@@ -148,5 +150,36 @@ public class UserService {
                 .and(userSpecifications.hasEmail(email));
 
         return userRepository.findAll(spec);
+    }
+
+    @Transactional
+    public void moneyTransfer(Long recipientAccountId, BigDecimal amount) {
+        Long userId = getUserIdFromToken();
+
+        User senderUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+        Account senderAccount = senderUser.getAccount();
+
+        if (recipientAccountId.equals(senderAccount.getId())) {
+            throw new RuntimeException("You cannot transfer money to yourself");
+        }
+
+        Account recipientAccount = accountRepository.findById(recipientAccountId)
+                .orElseThrow(() -> new RuntimeException("Recipient account not found"));
+
+        performTransfer(senderAccount, recipientAccount, amount);
+    }
+
+    private void performTransfer(Account senderAccount, Account recipientAccount, BigDecimal amount) {
+        if (senderAccount.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException("Insufficient balance");
+        }
+
+        senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
+
+        recipientAccount.setBalance(recipientAccount.getBalance().add(amount));
+
+        accountRepository.save(senderAccount);
+        accountRepository.save(recipientAccount);
     }
 }

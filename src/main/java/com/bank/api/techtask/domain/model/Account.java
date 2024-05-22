@@ -18,7 +18,7 @@ public class Account {
     private User user;
 
     private BigDecimal balance;
-    private BigDecimal initialBalance;  // Новое поле для начального баланса
+    private BigDecimal initialBalance;
 
     public Long getId() {
         return id;

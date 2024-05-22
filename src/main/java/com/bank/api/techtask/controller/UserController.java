@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -94,5 +95,11 @@ public class UserController {
             @RequestParam(required = false) String email) {
         List<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email);
         return ResponseEntity.ok(users);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transferMoney(@RequestParam Long recipientAccountId, @RequestParam BigDecimal amount) {
+        userService.moneyTransfer(recipientAccountId, amount);
+        return ResponseEntity.ok("Transfer successful");
     }
 }
