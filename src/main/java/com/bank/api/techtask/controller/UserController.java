@@ -102,11 +102,14 @@ public class UserController {
             @RequestParam(defaultValue = "fullName") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy.equals("balance") ? "account.balance" : sortBy);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection),
+                sortBy.equals("balance") ? "account.balance" : sortBy);
+
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email, pageable, sort);
         return ResponseEntity.ok(users);
     }
+
 
 
     @PostMapping("/transfer")
