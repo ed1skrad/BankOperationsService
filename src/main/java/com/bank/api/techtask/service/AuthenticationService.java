@@ -109,6 +109,7 @@ public class AuthenticationService {
         BigDecimal balance = request.getInitialSum();
 
         Account account = new Account();
+        account.setInitialBalance(balance);
         account.setBalance(balance);
         account.setUser(user);
 

@@ -86,18 +86,6 @@ public class UserController {
         return ResponseEntity.ok("Email updated successfully");
     }
 
-    @PostMapping("/add/email")
-    public ResponseEntity<String> addEmail(@RequestParam Long userId, @RequestParam String email) {
-        userService.addEmail(userId, email);
-        return ResponseEntity.ok("Email added successfully");
-    }
-
-    @PostMapping("/add/phone-number")
-    public ResponseEntity<String> addPhoneNumber(@RequestParam Long userId, @RequestParam String phoneNumber) {
-        userService.addPhoneNumber(userId, phoneNumber);
-        return ResponseEntity.ok("Phone number added successfully");
-    }
-
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth,
@@ -107,5 +95,4 @@ public class UserController {
         List<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email);
         return ResponseEntity.ok(users);
     }
-
 }

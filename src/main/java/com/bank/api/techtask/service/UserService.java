@@ -140,40 +140,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional
-    public void addEmail(Long userId, String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email is already in use.");
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
-
-        if (user.getEmail() == null) {
-            user.setEmail(email);
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("User already has an email.");
-        }
-    }
-
-    @Transactional
-    public void addPhoneNumber(Long userId, String phoneNumber) {
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException("Phone number is already in use.");
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
-
-        if (user.getPhoneNumber() == null) {
-            user.setPhoneNumber(phoneNumber);
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("User already has a phone number.");
-        }
-    }
-
     @Transactional(readOnly = true)
     public List<User> getAllUsers(Date dateOfBirth, String phoneNumber, String fullName, String email) {
         Specification<User> spec = Specification.where(userSpecifications.hasDateOfBirthAfter(dateOfBirth))

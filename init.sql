@@ -35,3 +35,5 @@ ALTER TABLE users
 
 ALTER TABLE users
     ADD COLUMN date_of_birth DATE NOT NULL;
+
+ALTER TABLE account ADD COLUMN initial_balance NUMERIC(19,2) NOT NULL DEFAULT 0;

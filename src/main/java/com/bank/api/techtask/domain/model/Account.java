@@ -18,6 +18,7 @@ public class Account {
     private User user;
 
     private BigDecimal balance;
+    private BigDecimal initialBalance;  // Новое поле для начального баланса
 
     public Long getId() {
         return id;
@@ -41,5 +42,23 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public BigDecimal getInitialBalance() {
+        return initialBalance;
+    }
+
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
+    }
+
+    public void increaseBalance() {
+        BigDecimal maxBalance = initialBalance.multiply(BigDecimal.valueOf(2.07));
+        BigDecimal newBalance = balance.multiply(BigDecimal.valueOf(1.05));
+        if (newBalance.compareTo(maxBalance) > 0) {
+            balance = maxBalance;
+        } else {
+            balance = newBalance;
+        }
     }
 }
