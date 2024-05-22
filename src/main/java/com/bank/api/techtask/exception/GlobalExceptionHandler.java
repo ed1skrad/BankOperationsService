@@ -136,4 +136,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(value = {PhoneNumberTakenException.class})
+    public ResponseEntity<ErrorResponse> handlePhoneNumberTakenException(HttpServletRequest request,
+                                                                         PhoneNumberTakenException exception) {
+        logger.error("PhoneNumberTakenException occurred! Message: {}", exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Phone number already in use!",
+                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

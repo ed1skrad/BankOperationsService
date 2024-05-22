@@ -3,6 +3,8 @@ package com.bank.api.techtask.service;
 import com.bank.api.techtask.config.JwtAuthenticationFilter;
 import com.bank.api.techtask.domain.model.User;
 import com.bank.api.techtask.exception.DeleteException;
+import com.bank.api.techtask.exception.EmailInUseException;
+import com.bank.api.techtask.exception.PhoneNumberTakenException;
 import com.bank.api.techtask.exception.UserNotFoundException;
 import com.bank.api.techtask.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,15 +53,19 @@ public class UserService {
         return this::getByUsername;
     }
 
-    @Transactional
-    public void deleteUserEmail() {
+    private Long getUserIdFromToken() {
         String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
         if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
             throw new RuntimeException("JWT token not found in the request header.");
         }
 
         String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
-        Long userId = jwtService.extractUserId(jwt);
+        return jwtService.extractUserId(jwt);
+    }
+
+    @Transactional
+    public void deleteUserEmail() {
+        Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
@@ -68,26 +74,17 @@ public class UserService {
             throw new DeleteException("User has no email or phone number. Cannot delete the email.");
         }
 
-        if(user.getEmail() == null){
-            throw new DeleteException("User already don't have an email address.");
+        if (user.getEmail() == null) {
+            throw new DeleteException("User already doesn't have an email address.");
         }
 
-
-        if (user.getEmail() != null) {
-            user.setEmail(null);
-            userRepository.save(user);
-        }
+        user.setEmail(null);
+        userRepository.save(user);
     }
 
     @Transactional
     public void deleteUserPhoneNumber() {
-        String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
-            throw new RuntimeException("JWT token not found in the request header.");
-        }
-
-        String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
-        Long userId = jwtService.extractUserId(jwt);
+        Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
@@ -96,34 +93,26 @@ public class UserService {
             throw new DeleteException("User has no email or phone number. Cannot delete the phone number.");
         }
 
-        if(user.getPhoneNumber() == null){
-            throw new DeleteException("User already don't have an phone number.");
+        if (user.getPhoneNumber() == null) {
+            throw new DeleteException("User already doesn't have a phone number.");
         }
 
-        if (user.getPhoneNumber() != null) {
-            user.setPhoneNumber(null);
-            userRepository.save(user);
-        }
+        user.setPhoneNumber(null);
+        userRepository.save(user);
     }
 
     @Transactional
     public void updatePhoneNumber(String phoneNumber) {
-        String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
-            throw new RuntimeException("JWT token not found in the request header.");
-        }
-
-        String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
-        Long userId = jwtService.extractUserId(jwt);
+        Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
 
-        if (user.getPhoneNumber() == null) {
-            throw new DeleteException("User has no phone number.");
-        }
-
         String parsedPhoneNumber = phoneNumber.replaceAll("[^\\d+]", "");
+
+        if (userRepository.existsByPhoneNumber(parsedPhoneNumber)) {
+            throw new PhoneNumberTakenException("User with this phone number already exists.");
+        }
 
         user.setPhoneNumber(parsedPhoneNumber);
         userRepository.save(user);
@@ -131,19 +120,13 @@ public class UserService {
 
     @Transactional
     public void updateEmail(String email) {
-        String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
-            throw new RuntimeException("JWT token not found in the request header.");
-        }
-
-        String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
-        Long userId = jwtService.extractUserId(jwt);
+        Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
 
-        if (user.getPhoneNumber() == null) {
-            throw new DeleteException("User has no email.");
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailInUseException("User with this email already exists.");
         }
 
         user.setEmail(email);
