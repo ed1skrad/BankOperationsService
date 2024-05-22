@@ -105,4 +105,48 @@ public class UserService {
             userRepository.save(user);
         }
     }
+
+    @Transactional
+    public void updatePhoneNumber(String phoneNumber) {
+        String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
+        if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
+            throw new RuntimeException("JWT token not found in the request header.");
+        }
+
+        String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
+        Long userId = jwtService.extractUserId(jwt);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+
+        if (user.getPhoneNumber() == null) {
+            throw new DeleteException("User has no phone number.");
+        }
+
+        String parsedPhoneNumber = phoneNumber.replaceAll("[^\\d+]", "");
+
+        user.setPhoneNumber(parsedPhoneNumber);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateEmail(String email) {
+        String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
+        if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
+            throw new RuntimeException("JWT token not found in the request header.");
+        }
+
+        String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
+        Long userId = jwtService.extractUserId(jwt);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+
+        if (user.getPhoneNumber() == null) {
+            throw new DeleteException("User has no email.");
+        }
+
+        user.setEmail(email);
+        userRepository.save(user);
+    }
 }

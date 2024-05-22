@@ -1,5 +1,7 @@
 package com.bank.api.techtask.controller;
 
+import com.bank.api.techtask.domain.dto.validation.EmailDTO;
+import com.bank.api.techtask.domain.dto.validation.PhoneNumberDTO;
 import com.bank.api.techtask.domain.model.User;
 import com.bank.api.techtask.service.AuthenticationService;
 import com.bank.api.techtask.service.UserService;
@@ -65,5 +67,17 @@ public class UserController {
     public ResponseEntity<String> deleteUserPhoneNumber() {
         userService.deleteUserPhoneNumber();
         return ResponseEntity.ok("Phone number deleted successfully");
+    }
+
+    @PatchMapping("/update/phone-number")
+    public ResponseEntity<String> updateUserPhoneNumber(@Valid @RequestBody PhoneNumberDTO phoneNumberDTO) {
+        userService.updatePhoneNumber(phoneNumberDTO.getPhoneNumber());
+        return ResponseEntity.ok("Phone number updated successfully");
+    }
+
+    @PatchMapping("/update/email")
+    public ResponseEntity<String> updateUserEmail(@Valid @RequestBody EmailDTO emailDTO) {
+        userService.updateEmail(emailDTO.getEmail());
+        return ResponseEntity.ok("Email updated successfully");
     }
 }

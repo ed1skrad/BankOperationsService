@@ -3,6 +3,7 @@ package com.bank.api.techtask.domain.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,6 +45,7 @@ public class User implements UserDetails {
     private String password;
 
     @Size(max = 120)
+    @Pattern(regexp = "^\\+?[0-9]*$", message = "Phone number must contain only numbers and an optional leading +")
     private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
