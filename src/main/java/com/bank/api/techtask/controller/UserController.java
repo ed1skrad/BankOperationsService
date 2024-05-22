@@ -7,6 +7,10 @@ import com.bank.api.techtask.service.AuthenticationService;
 import com.bank.api.techtask.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,14 +92,22 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers(
+    public ResponseEntity<Page<User>> getAllUsers(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String fullName,
-            @RequestParam(required = false) String email) {
-        List<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email);
+            @RequestParam(required = false) String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "fullName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy.equals("balance") ? "account.balance" : sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email, pageable, sort);
         return ResponseEntity.ok(users);
     }
+
 
     @PostMapping("/transfer")
     public ResponseEntity<String> transferMoney(@RequestParam Long recipientAccountId, @RequestParam BigDecimal amount) {

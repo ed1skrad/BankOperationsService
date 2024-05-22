@@ -7,20 +7,22 @@ import com.bank.api.techtask.exception.*;
 import com.bank.api.techtask.repository.AccountRepository;
 import com.bank.api.techtask.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Service class for handling user operations.
- */
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -28,10 +30,8 @@ public class UserService {
     private final HttpServletRequest httpServletRequest;
     private final UserSpecifications userSpecifications;
     private final AccountRepository accountRepository;
+    private final ConcurrentHashMap<Long, Lock> accountLocks = new ConcurrentHashMap<>();
 
-    /**
-     *Constructor.
-     */
     @Autowired
     public UserService(UserRepository repository, JwtService jwtService, HttpServletRequest httpServletRequest,
                        UserSpecifications userSpecifications, AccountRepository accountRepository) {
@@ -42,22 +42,11 @@ public class UserService {
         this.accountRepository = accountRepository;
     }
 
-    /**
-     * Retrieves a user by their username.
-     *
-     * @param username the username of the user to retrieve.
-     * @return the user.
-     * @throws UsernameNotFoundException if the user is not found.
-     */
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
-
     }
 
-    /**
-     *Constructor.
-     */
     public UserDetailsService userDetailsService() {
         return this::getByUsername;
     }
@@ -143,13 +132,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> getAllUsers(Date dateOfBirth, String phoneNumber, String fullName, String email) {
+    public Page<User> getAllUsers(Date dateOfBirth, String phoneNumber, String fullName, String email, Pageable pageable, Sort sort) {
         Specification<User> spec = Specification.where(userSpecifications.hasDateOfBirthAfter(dateOfBirth))
                 .and(userSpecifications.hasPhoneNumber(phoneNumber))
                 .and(userSpecifications.hasFullNameStartingWith(fullName))
                 .and(userSpecifications.hasEmail(email));
 
-        return userRepository.findAll(spec);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return userRepository.findAll(spec, pageable);
     }
 
     @Transactional
@@ -167,7 +157,29 @@ public class UserService {
         Account recipientAccount = accountRepository.findById(recipientAccountId)
                 .orElseThrow(() -> new RuntimeException("Recipient account not found"));
 
-        performTransfer(senderAccount, recipientAccount, amount);
+        Lock senderLock = accountLocks.computeIfAbsent(senderAccount.getId(), k -> new ReentrantLock());
+        Lock recipientLock = accountLocks.computeIfAbsent(recipientAccount.getId(), k -> new ReentrantLock());
+
+        Lock firstLock, secondLock;
+        if (senderAccount.getId() < recipientAccount.getId()) {
+            firstLock = senderLock;
+            secondLock = recipientLock;
+        } else {
+            firstLock = recipientLock;
+            secondLock = senderLock;
+        }
+
+        firstLock.lock();
+        try {
+            secondLock.lock();
+            try {
+                performTransfer(senderAccount, recipientAccount, amount);
+            } finally {
+                secondLock.unlock();
+            }
+        } finally {
+            firstLock.unlock();
+        }
     }
 
     private void performTransfer(Account senderAccount, Account recipientAccount, BigDecimal amount) {
@@ -176,7 +188,6 @@ public class UserService {
         }
 
         senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
-
         recipientAccount.setBalance(recipientAccount.getBalance().add(amount));
 
         accountRepository.save(senderAccount);

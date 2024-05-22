@@ -27,8 +27,10 @@ public class User implements UserDetails {
     @NotBlank
     @Size(max = 255)
     private String username;
+
     @NotBlank
     @Size(max = 255)
+    @Column(name = "full_name")
     private String fullName;
 
     @NotNull
