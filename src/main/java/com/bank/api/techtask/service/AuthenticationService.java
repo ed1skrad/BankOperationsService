@@ -99,6 +99,7 @@ public class AuthenticationService {
         user.setPhoneNumber(request.getPhoneNumber());
         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
                 .orElseThrow(() -> new RoleNotFoundException("Error. User not found."));
+        //defaut admin role
         Role adminRole = roleRepository.findByName(RoleEnum.ROLE_ADMIN)
                 .orElseThrow(() -> new RoleNotFoundException("Error. Admin not found."));
 

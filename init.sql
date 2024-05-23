@@ -2,7 +2,10 @@ CREATE TABLE users (
                        id SERIAL PRIMARY KEY,
                        username VARCHAR(20) NOT NULL,
                        email VARCHAR(50) UNIQUE,
-                       password VARCHAR(120) NOT NULL
+                       password VARCHAR(120) NOT NULL,
+                       full_name VARCHAR(255) NOT NULL,
+                       date_of_birth DATE NOT NULL,
+                        phone_number VARCHAR(32)
 );
 
 CREATE TABLE roles (
@@ -25,15 +28,7 @@ CREATE TABLE account (
                          id SERIAL PRIMARY KEY,
                          balance NUMERIC(19,2) NOT NULL,
                          user_id BIGINT UNIQUE,
+                         initial_balance NUMERIC(19,2) NOT NULL,
                          FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
-ALTER TABLE users
-    ADD COLUMN full_name VARCHAR(255) NOT NULL,
-    ADD COLUMN date_of_birth VARCHAR(32) NOT NULL,
-    ADD COLUMN phone_number VARCHAR(120);
-
-ALTER TABLE users
-    ADD COLUMN date_of_birth DATE NOT NULL;
-
-ALTER TABLE account ADD COLUMN initial_balance NUMERIC(19,2) NOT NULL DEFAULT 0;

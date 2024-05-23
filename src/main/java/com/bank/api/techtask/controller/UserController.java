@@ -90,6 +90,7 @@ public class UserController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<User>> getAllUsers(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOfBirth,
             @RequestParam(required = false) String phoneNumber,
@@ -109,6 +110,7 @@ public class UserController {
 
 
     @PostMapping("/transfer")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> transferMoney(@RequestParam Long recipientAccountId, @RequestParam BigDecimal amount) {
         userService.moneyTransfer(recipientAccountId, amount);
         return ResponseEntity.ok("Transfer successful");
