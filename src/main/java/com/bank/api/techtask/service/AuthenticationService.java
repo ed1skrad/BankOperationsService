@@ -21,11 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Service class for handling authentication operations such as sign up, sign in, and logout.
@@ -43,6 +41,7 @@ public class AuthenticationService {
     private final InvalidTokenRepository invalidTokenRepository;
     private final AccountRepository accountRepository;
 
+    private static final String USER_NOT_FOUND_ERROR_MESSAGE = "User not found with id %d";
     /**
      * Constructor.
      */
@@ -151,7 +150,7 @@ public class AuthenticationService {
     @Transactional
     public void deleteUserById(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_ERROR_MESSAGE, userId)));
 
         user.getRole().clear();
 
@@ -166,7 +165,7 @@ public class AuthenticationService {
      */
     public void updateUser(Long userId, User updatedUser) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_ERROR_MESSAGE, userId)));
 
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
@@ -204,7 +203,7 @@ public class AuthenticationService {
     public List<RoleEnum> findUserRolesByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found with username: " + username));
+                        new UserNotFoundException(String.format(USER_NOT_FOUND_ERROR_MESSAGE, username)));
 
         List<Role> userRoles = user.getRole();
         if (userRoles == null || userRoles.isEmpty()) {

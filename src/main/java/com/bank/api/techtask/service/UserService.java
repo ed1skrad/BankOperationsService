@@ -151,16 +151,17 @@ public class UserService {
         Account senderAccount = senderUser.getAccount();
 
         if (recipientAccountId.equals(senderAccount.getId())) {
-            throw new RuntimeException("You cannot transfer money to yourself");
+            throw new TransferException("You cannot transfer money to yourself");
         }
 
         Account recipientAccount = accountRepository.findById(recipientAccountId)
-                .orElseThrow(() -> new RuntimeException("Recipient account not found"));
+                .orElseThrow(() -> new TransferException("Recipient account not found"));
 
         Lock senderLock = accountLocks.computeIfAbsent(senderAccount.getId(), k -> new ReentrantLock());
         Lock recipientLock = accountLocks.computeIfAbsent(recipientAccount.getId(), k -> new ReentrantLock());
 
-        Lock firstLock, secondLock;
+        Lock firstLock;
+        Lock secondLock;
         if (senderAccount.getId() < recipientAccount.getId()) {
             firstLock = senderLock;
             secondLock = recipientLock;

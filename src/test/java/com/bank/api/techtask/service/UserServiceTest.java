@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -41,7 +41,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testMoneyTransferInsufficientBalance() {
+    void testMoneyTransferInsufficientBalance() {
         Long userId = 1L;
         Long recipientAccountId = 2L;
         BigDecimal amount = new BigDecimal("150.00");
@@ -70,7 +70,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testMoneyTransferSuccess() {
+    void testMoneyTransferSuccess() {
         Long userId = 1L;
         Long recipientAccountId = 2L;
         BigDecimal amount = new BigDecimal("50.00");
@@ -102,7 +102,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testMoneyTransferToSelf() {
+    void testMoneyTransferToSelf() {
         Long userId = 1L;
         BigDecimal amount = new BigDecimal("50.00");
 
@@ -122,7 +122,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testMoneyTransferRecipientNotFound() {
+    void testMoneyTransferRecipientNotFound() {
         Long userId = 1L;
         Long recipientAccountId = 2L;
         BigDecimal amount = new BigDecimal("50.00");
@@ -144,7 +144,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testMoneyTransferUserNotFound() {
+    void testMoneyTransferUserNotFound() {
         Long userId = 1L;
         Long recipientAccountId = 2L;
         BigDecimal amount = new BigDecimal("50.00");

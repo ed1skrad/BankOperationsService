@@ -153,4 +153,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {TransferException.class})
+    public ResponseEntity<ErrorResponse> handleTransferException(HttpServletRequest request,
+                                                                 TransferException exception) {
+        logger.error("TransferException occurred! Message: {}", exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Some error occurs while transferring money!",
+                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

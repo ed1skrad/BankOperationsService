@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private String password;
 
     @Size(max = 120)
-    @Pattern(regexp = "^\\+?[0-9]*$", message = "Phone number must contain only numbers and an optional leading +")
+    @Pattern(regexp = "^\\+?\\d*$", message = "Phone number must contain only numbers and an optional leading +")
     private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -192,31 +192,20 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public List<Role> getRole() {
+        return roles;
+    }
+
+    public void setRole(List<Role> roles) {
+        this.roles = roles;
+    }
+
     /**
      * Returns the roles of the user.
      *
      * @return the roles.
      */
-    public List<Role> getRole() {
-        return roles;
-    }
 
-    /**
-     * Sets the roles of the user.
-     *
-     * @param roles the roles to set.
-     */
-    public void setRole(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
 
 
     public Account getAccount() {
