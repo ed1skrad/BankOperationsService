@@ -31,11 +31,12 @@ How to run?
 docker-compose up
 
 ## env
+- **POSTGRES_USER=example**
+- **POSTGRES_PASSWORD=example**
+- **POSTGRES_DB=bankdb**
+- **SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/bankdb**
+- **SPRING_DATASOURCE_USERNAME=example**
+- **SPRING_DATASOURCE_PASSWORD=example**
 
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
-SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
-SPRING_DATASOURCE_USERNAME=
-SPRING_DATASOURCE_PASSWORD=
-
+## docs
+localhost:port/swagger-ui/index.html
