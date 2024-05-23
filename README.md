@@ -21,10 +21,10 @@
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ed1skrad_BankOperationsService)](https://sonarcloud.io/summary/new_code?id=ed1skrad_BankOperationsService)
 
 ## Schema
-![db](https://github.com/ed1skrad/BackOperationsService/blob/main/image/db.jpg)
+![db](https://github.com/ed1skrad/BankOperationsService/blob/main/image/db.jpg)
 
 ## Swagger
-![swagger](https://github.com/ed1skrad/BackOperationsService/blob/main/image/swagger.jpg)
+![swagger](https://github.com/ed1skrad/BankOperationsService/blob/main/image/swagger.jpg)
 
 ## Dockerized
 How to run?
