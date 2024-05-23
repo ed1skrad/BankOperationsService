@@ -1,4 +1,4 @@
-name: Render Spring POC hook example
+name: pipeline
 
 on:
   push:
@@ -25,3 +25,12 @@ jobs:
           tasks: build
           java-home: ${{ env.JAVA_HOME_17_X64 }}
           publish-atoms: false
+
+      - name: Build Docker image
+        run: docker build -t my-image-name:${{ github.sha }} .
+
+      - name: Login to container registry
+        run: docker login my-registry.example.com -u my-username -p my-password
+
+      - name: Push Docker image to registry
+        run: docker push my-registry.example.com/my-image-name:${{ github.sha }}
