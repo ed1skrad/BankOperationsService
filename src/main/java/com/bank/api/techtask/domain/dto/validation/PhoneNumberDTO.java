@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 public class PhoneNumberDTO {
 
     @NotBlank
-    @Pattern(regexp = "\\+?[0-9]*", message = "Phone number must contain only numbers and an optional leading +")
+    @Pattern(regexp = "^\\+?\\d*$", message = "Phone number must contain only numbers and an optional leading +")
     private String phoneNumber;
 
     public String getPhoneNumber() {

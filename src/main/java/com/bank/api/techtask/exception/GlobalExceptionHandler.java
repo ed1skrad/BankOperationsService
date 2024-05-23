@@ -162,4 +162,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {TransferException.class})
+    public ResponseEntity<ErrorResponse> handleJwtTokenException(HttpServletRequest request,
+                                                                 JwtTokenException exception) {
+        logger.error("JwtTokenException occurred! Message: {}", exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Some error occurs while transferring money!",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

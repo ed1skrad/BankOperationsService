@@ -1,4 +1,5 @@
 package com.bank.api.techtask.aspect;
+import com.bank.api.techtask.exception.UserNotFoundException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -45,6 +46,10 @@ public class ServiceAspect {
         } catch (IllegalArgumentException e) {
             logger.error("Illegal argument: {} in method: {}", Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().toShortString());
             throw e;
+        } catch (UserNotFoundException e) {
+            logger.error("User not found!");
+            throw e;
         }
     }
+
 }

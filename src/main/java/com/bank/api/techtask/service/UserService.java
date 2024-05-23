@@ -54,7 +54,7 @@ public class UserService {
     private Long getUserIdFromToken() {
         String authHeader = httpServletRequest.getHeader(JwtAuthenticationFilter.HEADER_NAME);
         if (authHeader == null || !authHeader.startsWith(JwtAuthenticationFilter.BEARER_PREFIX)) {
-            throw new RuntimeException("JWT token not found in the request header.");
+            throw new JwtTokenException("JWT token not found in the request header.");
         }
 
         String jwt = authHeader.substring(JwtAuthenticationFilter.BEARER_PREFIX.length());
