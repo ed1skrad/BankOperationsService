@@ -51,14 +51,4 @@ public class Account {
     public void setInitialBalance(BigDecimal initialBalance) {
         this.initialBalance = initialBalance;
     }
-
-    public void increaseBalance() {
-        BigDecimal maxBalance = initialBalance.multiply(BigDecimal.valueOf(2.07));
-        BigDecimal newBalance = balance.multiply(BigDecimal.valueOf(1.05));
-        if (newBalance.compareTo(maxBalance) > 0) {
-            balance = maxBalance;
-        } else {
-            balance = newBalance;
-        }
-    }
 }

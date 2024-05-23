@@ -144,4 +144,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {InsufficientBalanceException.class})
+    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(HttpServletRequest request,
+                                                                            InsufficientBalanceException exception) {
+        logger.error("InsufficientBalanceException occurred! Message: {}", exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Some problems occurs with your balance or initial sum!",
+                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

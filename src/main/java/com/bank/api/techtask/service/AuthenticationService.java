@@ -9,10 +9,7 @@ import com.bank.api.techtask.domain.model.Account;
 import com.bank.api.techtask.domain.model.Role;
 import com.bank.api.techtask.domain.model.RoleEnum;
 import com.bank.api.techtask.domain.model.User;
-import com.bank.api.techtask.exception.EmailInUseException;
-import com.bank.api.techtask.exception.PhoneNumberTakenException;
-import com.bank.api.techtask.exception.RoleNotFoundException;
-import com.bank.api.techtask.exception.UsernameTakenException;
+import com.bank.api.techtask.exception.*;
 import com.bank.api.techtask.repository.AccountRepository;
 import com.bank.api.techtask.repository.RoleRepository;
 import com.bank.api.techtask.repository.UserRepository;
@@ -87,6 +84,11 @@ public class AuthenticationService {
 
         if(userRepository.existsByPhoneNumber(request.getPhoneNumber())){
             throw new PhoneNumberTakenException("Error: phone number already in use!");
+        }
+
+        BigDecimal initialSum = request.getInitialSum();
+        if (initialSum.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InsufficientBalanceException("Error: initial sum must be greater than 0!");
         }
 
         User user = new User();

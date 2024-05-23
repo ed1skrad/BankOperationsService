@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
 /**
  * Controller for managing users.
  */
@@ -93,7 +91,7 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<User>> getAllUsers(
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOfBirth,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String fullName,
             @RequestParam(required = false) String email,
@@ -102,14 +100,12 @@ public class UserController {
             @RequestParam(defaultValue = "fullName") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection),
-                sortBy.equals("balance") ? "account.balance" : sortBy);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy.equals("balance") ? "account.balance" : sortBy);
 
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<User> users = userService.getAllUsers(dateOfBirth, phoneNumber, fullName, email, pageable, sort);
         return ResponseEntity.ok(users);
     }
-
 
 
     @PostMapping("/transfer")
