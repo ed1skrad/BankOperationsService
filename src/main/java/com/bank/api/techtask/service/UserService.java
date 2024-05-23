@@ -25,6 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class UserService {
+    private static final String USER_NOT_FOUND_WITH_ID = "User not found with id ";
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final HttpServletRequest httpServletRequest;
@@ -66,7 +68,7 @@ public class UserService {
         Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         if (user.getPhoneNumber() == null) {
             throw new DeleteException("User has no email or phone number. Cannot delete the email.");
@@ -85,7 +87,7 @@ public class UserService {
         Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         if (user.getEmail() == null) {
             throw new DeleteException("User has no email or phone number. Cannot delete the phone number.");
@@ -104,7 +106,7 @@ public class UserService {
         Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         String parsedPhoneNumber = phoneNumber.replaceAll("[^\\d+]", "");
 
@@ -121,7 +123,7 @@ public class UserService {
         Long userId = getUserIdFromToken();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         if (userRepository.existsByEmail(email)) {
             throw new EmailInUseException("User with this email already exists.");
@@ -147,7 +149,7 @@ public class UserService {
         Long userId = getUserIdFromToken();
 
         User senderUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
         Account senderAccount = senderUser.getAccount();
 
         if (recipientAccountId.equals(senderAccount.getId())) {

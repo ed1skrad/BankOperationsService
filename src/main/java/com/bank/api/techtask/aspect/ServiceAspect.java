@@ -1,4 +1,5 @@
 package com.bank.api.techtask.aspect;
+
 import com.bank.api.techtask.exception.UserNotFoundException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -20,36 +21,49 @@ public class ServiceAspect {
 
     @Before("execution(* com.bank.api.techtask.service..*.*(..))")
     public void logBefore(JoinPoint joinPoint) {
-        logger.info("Entering method: {} with arguments: {}", joinPoint.getSignature().toShortString(), Arrays.toString(joinPoint.getArgs()));
+        if (logger.isInfoEnabled()) {
+            logger.info("Entering method: {} with arguments: {}", joinPoint.getSignature().toShortString(), Arrays.toString(joinPoint.getArgs()));
+        }
     }
 
     @AfterReturning(pointcut = "execution(* com.bank.api.techtask.service..*.*(..))", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
-        logger.info("Exiting method: {} with result: {}", joinPoint.getSignature().toShortString(), result);
+        if (logger.isInfoEnabled()) {
+            logger.info("Exiting method: {} with result: {}", joinPoint.getSignature().toShortString(), result);
+        }
     }
 
     @AfterThrowing(pointcut = "execution(* com.bank.api.techtask.service..*.*(..))", throwing = "error")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable error) {
-        logger.error("Exception in method: {} with cause: {}", joinPoint.getSignature().toShortString(), error.getMessage(), error);
+        if (logger.isErrorEnabled()) {
+            logger.error("Exception in method: {} with cause: {}", joinPoint.getSignature().toShortString(), error.getMessage(), error);
+        }
     }
 
     @Around("execution(* com.bank.api.techtask.service..*.*(..))")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
-        logger.info("Method {} execution start", joinPoint.getSignature().toShortString());
+        if (logger.isInfoEnabled()) {
+            logger.info("Method {} execution start", joinPoint.getSignature().toShortString());
+        }
 
         try {
             Object result = joinPoint.proceed();
             long elapsedTime = System.currentTimeMillis() - startTime;
-            logger.info("Method {} execution end, elapsed time: {} ms", joinPoint.getSignature().toShortString(), elapsedTime);
+            if (logger.isInfoEnabled()) {
+                logger.info("Method {} execution end, elapsed time: {} ms", joinPoint.getSignature().toShortString(), elapsedTime);
+            }
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("Illegal argument: {} in method: {}", Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().toShortString());
+            if (logger.isErrorEnabled()) {
+                logger.error("Illegal argument: {} in method: {}", Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().toShortString());
+            }
             throw e;
         } catch (UserNotFoundException e) {
-            logger.error("User not found!");
+            if (logger.isErrorEnabled()) {
+                logger.error("User not found!");
+            }
             throw e;
         }
     }
-
 }
